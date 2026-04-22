@@ -23,13 +23,16 @@ function saveData() {
 function renderCategories() {
     const catSelect = document.getElementById('task-category');
     const filterSelect = document.getElementById('category-filter');
+    const editCatSelect = document.getElementById('edit-category');
     
     catSelect.innerHTML = '';
     filterSelect.innerHTML = '<option value="all">Összes kategória</option>';
+    editCatSelect.innerHTML = '';
 
     categories.forEach(cat => {
         catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
         filterSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+        editCatSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
     });
 }
 
@@ -58,11 +61,14 @@ function renderTasks(filter = 'all') {
                 : `<span class="deadline">${task.deadline}</span>`;
         }
 
+        const noteHTML = task.note ? `<span class="note">Megjegyzés: ${task.note}</span>` : '';
+
         const li = document.createElement('li');
         li.className = `task-item ${color}`;
         li.innerHTML = `
             <input type="checkbox" class="complete-checkbox" data-index="${realIndex}" ${task.completed ? 'checked' : ''}>
             <span class="task-title ${task.completed ? 'completed' : ''}">${task.title}</span>
+            ${noteHTML}
             <small>${task.category || 'Egyéb'}</small>
             ${deadlineHTML}
             
@@ -81,7 +87,6 @@ function renderTasks(filter = 'all') {
 }
 
 function addEventListeners() {
-    // Pipa
     document.querySelectorAll('.complete-checkbox').forEach(cb => {
         cb.addEventListener('change', function() {
             const index = parseInt(this.dataset.index);
@@ -91,7 +96,6 @@ function addEventListeners() {
         });
     });
 
-    // Teljesítve gomb (csak ha már be van pipálva)
     document.querySelectorAll('.complete-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             if (this.disabled) return;
@@ -104,23 +108,41 @@ function addEventListeners() {
         });
     });
 
-    // Szerkesztés
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const index = parseInt(this.dataset.index);
-            const newTitle = prompt("Új feladat cím:", tasks[index].title);
-            if (newTitle && newTitle.trim() !== '') {
-                tasks[index].title = newTitle.trim();
-                saveData();
-                renderTasks(document.getElementById('category-filter').value);
-            }
+            const task = tasks[index];
+
+            document.getElementById('edit-title').value = task.title || '';
+            document.getElementById('edit-note').value = task.note || '';
+            document.getElementById('edit-deadline').value = task.deadline || '';
+            document.getElementById('edit-priority').value = task.priority || 'medium';
+            document.getElementById('edit-category').value = task.category || 'Egyéb';
+
+            document.getElementById('edit-modal').style.display = 'block';
         });
     });
 
-    // Törlés
+    document.getElementById('save-edit').addEventListener('click', () => {
+        document.getElementById('edit-modal').style.display = 'none';
+    });
+
+    document.getElementById('cancel-edit').addEventListener('click', () => {
+        document.getElementById('edit-modal').style.display = 'none';
+    });
+
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            if (confirm("Biztosan törlöd?")) {
+            if (this.textContent === "Törlés") {
+                this.textContent = "Biztos?";
+                this.style.background = "#e67e22";
+                setTimeout(() => {
+                    if (this.textContent === "Biztos?") {
+                        this.textContent = "Törlés";
+                        this.style.background = "#e74c3c";
+                    }
+                }, 3000);
+            } else {
                 const index = parseInt(this.dataset.index);
                 const deleted = {...tasks[index], action: "Törölve", date: new Date().toISOString()};
                 history.unshift(deleted);
@@ -132,20 +154,48 @@ function addEventListeners() {
     });
 }
 
-// Új kategória, szűrés, statisztika, előzmények, random tipp, sötét mód...
+// Új kategória troll védelemmel + 100 karakter limit
 document.getElementById('add-category-btn').addEventListener('click', () => {
-    let uj = prompt("Új kategória neve:");
-    if (uj && uj.trim() !== '' && !categories.includes(uj.trim())) {
-        categories.push(uj.trim());
-        saveData();
-        renderCategories();
-    }
+    document.getElementById('new-category-name').value = '';
+    document.getElementById('category-modal').style.display = 'block';
 });
 
+document.getElementById('save-category').addEventListener('click', () => {
+    let newName = document.getElementById('new-category-name').value.trim();
+
+    if (!newName) {
+        alert("A kategória neve nem lehet üres!");
+        return;
+    }
+    if (newName.length > 100) {
+        alert("A kategória neve maximum 100 karakter lehet!");
+        return;
+    }
+    if (categories.includes(newName)) {
+        alert("Ez a kategória már létezik!");
+        return;
+    }
+    if (categories.length >= 20) {
+        alert("Maximum 20 kategóriát hozhatsz létre.");
+        return;
+    }
+
+    categories.push(newName);
+    saveData();
+    renderCategories();
+    document.getElementById('category-modal').style.display = 'none';
+});
+
+document.getElementById('cancel-category').addEventListener('click', () => {
+    document.getElementById('category-modal').style.display = 'none';
+});
+
+// Szűrés
 document.getElementById('category-filter').addEventListener('change', (e) => {
     renderTasks(e.target.value);
 });
 
+// Statisztika
 document.getElementById('show-stats').addEventListener('click', () => {
     let kesz = tasks.filter(t => t.completed).length;
     let ossz = tasks.length;
@@ -159,6 +209,7 @@ document.getElementById('close-stats').addEventListener('click', () => {
     document.getElementById('stats-modal').style.display = 'none';
 });
 
+// Előzmények
 document.getElementById('show-history').addEventListener('click', () => {
     let html = '<h3>Előzmények</h3>';
 
@@ -167,12 +218,13 @@ document.getElementById('show-history').addEventListener('click', () => {
 
     if (completed.length > 0) {
         html += '<div class="history-section"><h3>✅ Teljesített feladatok</h3>';
-        completed.forEach((item, idx) => {
+        completed.forEach((item) => {
             const histIndex = history.indexOf(item);
             html += `<div class="history-item">
                         <strong>${item.title}</strong> — ${item.category || 'Egyéb'}
+                        ${item.note ? `<br><span class="note">Megjegyzés: ${item.note}</span>` : ''}
                         <small>(${new Date(item.date).toLocaleDateString('hu-HU')})</small>
-                        <button class="undo-btn" data-history-index="${histIndex}" style="margin-left:10px;">Visszaállítás</button>
+                        <button class="undo-btn" data-history-index="${histIndex}">Visszaállítás</button>
                      </div>`;
         });
         html += '</div>';
@@ -194,7 +246,6 @@ document.getElementById('show-history').addEventListener('click', () => {
     document.getElementById('history-content').innerHTML = html;
     document.getElementById('history-modal').style.display = 'block';
 
-    // Visszaállítás az előzményből
     document.querySelectorAll('#history-content .undo-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const histIndex = parseInt(this.dataset.historyIndex);
@@ -203,6 +254,7 @@ document.getElementById('show-history').addEventListener('click', () => {
             tasks.push({
                 id: Date.now(),
                 title: taskToRestore.title,
+                note: taskToRestore.note || "",
                 deadline: taskToRestore.deadline,
                 priority: taskToRestore.priority,
                 category: taskToRestore.category,
@@ -222,14 +274,26 @@ document.getElementById('close-history').addEventListener('click', () => {
     document.getElementById('history-modal').style.display = 'none';
 });
 
+// Random tipp
 document.getElementById('random-tip').addEventListener('click', () => {
-    const tips = ["Kezdj el valamit, amit már rég halogatsz – csak 5 percig!", "Írd fel a 3 legfontosabb feladatot mára.", "Használj Pomodoro technikát: 25 perc munka, 5 perc szünet.", "Csináld meg először a legnehezebb feladatot.", "Állíts be egy kis jutalmat magadnak a nap végén."];
-    alert("💡 Mai tipp:\n\n" + tips[Math.floor(Math.random() * tips.length)]);
+    const tips = [
+        "Kezdj el valamit, amit már rég halogatsz – csak 5 percig!",
+        "Írd fel a 3 legfontosabb feladatot mára.",
+        "Használj Pomodoro technikát: 25 perc munka, 5 perc szünet.",
+        "Csináld meg először a legnehezebb feladatot.",
+        "Állíts be egy kis jutalmat magadnak a nap végén."
+    ];
+    document.getElementById('tip-text').textContent = tips[Math.floor(Math.random() * tips.length)];
+    document.getElementById('tip-modal').style.display = 'block';
+});
+
+document.getElementById('close-tip').addEventListener('click', () => {
+    document.getElementById('tip-modal').style.display = 'none';
 });
 
 document.getElementById('theme-toggle').addEventListener('click', () => {
     document.body.classList.toggle('dark');
-    document.getElementById('theme-toggle').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    document.getElementById('theme-toggle').textContent = document.body.classList.contains('dark') ? 'Világos mód' : 'Sötét mód';
 });
 
 document.getElementById('task-form').addEventListener('submit', function(e) {
@@ -240,6 +304,7 @@ document.getElementById('task-form').addEventListener('submit', function(e) {
     tasks.push({
         id: Date.now(),
         title: title,
+        note: "",
         deadline: document.getElementById('task-deadline').value || null,
         priority: document.getElementById('task-priority').value,
         category: document.getElementById('task-category').value || 'Egyéb',

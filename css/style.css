@@ -1,4 +1,8 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
     font-family: Arial, sans-serif;
@@ -7,7 +11,10 @@ body {
     transition: 0.3s;
 }
 
-body.dark { background-color: #1e1e1e; color: #ddd; }
+body.dark {
+    background-color: #1e1e1e;
+    color: #ddd;
+}
 
 .container {
     max-width: 850px;
@@ -18,7 +25,9 @@ body.dark { background-color: #1e1e1e; color: #ddd; }
     overflow: hidden;
 }
 
-body.dark .container { background: #2d2d2d; }
+body.dark .container {
+    background: #2d2d2d;
+}
 
 header {
     background: #2c3e50;
@@ -29,11 +38,19 @@ header {
     align-items: center;
 }
 
-#theme-toggle { background: none; border: none; font-size: 26px; cursor: pointer; }
+#theme-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-h1 { font-size: 2.1rem; }
+h1 {
+    font-size: 2.1rem;
+}
 
-/* Form */
+/* Form és lista */
 #task-form {
     padding: 20px;
     background: #f8f9fa;
@@ -42,7 +59,9 @@ h1 { font-size: 2.1rem; }
     gap: 10px;
 }
 
-body.dark #task-form { background: #3a3a3a; }
+body.dark #task-form {
+    background: #3a3a3a;
+}
 
 #task-form input, #task-form select, #task-form button {
     padding: 12px;
@@ -62,7 +81,6 @@ body.dark #task-form { background: #3a3a3a; }
     cursor: pointer;
 }
 
-/* Lista */
 #task-list {
     list-style: none;
     padding: 15px;
@@ -90,14 +108,16 @@ body.dark .task-item.gray   { background: #3a3a3a; }
 body.dark .task-item.yellow { background: #4a3f1f; }
 body.dark .task-item.red    { background: #4a2a2a; }
 
-.task-title { flex: 1; font-size: 17px; }
+.task-title { flex: 1; font-size: 17px; word-break: break-word; }
 .task-title.completed { text-decoration: line-through; color: #888; }
+
+.note { font-size: 14.5px; color: #555; font-style: italic; margin-top: 5px; display: block; }
 
 .deadline { font-size: 14.5px; margin-left: auto; white-space: nowrap; }
 .deadline.overdue { color: #e74c3c; font-weight: bold; }
 
-/* Gombok */
-.complete-btn, .undo-btn, .edit-btn, .delete-btn {
+/* Normál gombok */
+.complete-btn, .edit-btn, .delete-btn {
     padding: 8px 14px;
     border: none;
     border-radius: 6px;
@@ -109,9 +129,39 @@ body.dark .task-item.red    { background: #4a2a2a; }
 .complete-btn { background: #27ae60; color: white; }
 .complete-btn:disabled { background: #95a5a6; color: #ddd; cursor: not-allowed; }
 
-.undo-btn { background: #f39c12; color: white; }
 .edit-btn { background: #3498db; color: white; }
 .delete-btn { background: #e74c3c; color: white; }
+
+/* Visszaállítás gomb - kicsi és ugyanabban a sorban */
+.undo-btn { 
+    background: #f39c12; 
+    color: white; 
+    padding: 4px 9px; 
+    font-size: 12.5px; 
+    border-radius: 4px;
+    margin-left: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Előzmény item - egy sorban tartja a gombot */
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    flex-wrap: nowrap;
+}
+
+body.dark .history-item {
+    border-bottom: 1px solid #444;
+}
+
+.history-item strong {
+    flex: 1;
+    margin-right: 10px;
+}
 
 /* Actions */
 .actions {
@@ -137,19 +187,71 @@ body.dark .task-item.red    { background: #4a2a2a; }
 .modal {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0,0,0,0.7);
     z-index: 1000;
 }
 
 .modal-content {
     background: white;
-    margin: 8% auto;
-    padding: 25px;
+    padding: 30px 35px;
     width: 90%;
-    max-width: 550px;
-    border-radius: 12px;
+    max-width: 460px;
+    border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-body.dark .modal-content { background: #2d2d2d; color: #ddd; }
+body.dark .modal-content {
+    background: #2d2d2d;
+    color: #ddd;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-content input, 
+.modal-content select, 
+.modal-content textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+body.dark .modal-content input,
+body.dark .modal-content select,
+body.dark .modal-content textarea {
+    border-color: #555;
+    background: #3a3a3a;
+    color: #ddd;
+}
+
+.modal-content button {
+    padding: 12px 24px;
+    margin: 6px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#save-edit, #save-category { background: #27ae60; color: white; }
+#cancel-edit, #cancel-category { background: #e74c3c; color: white; }
+
+/* Előzmények görgethető */
+#history-content {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}

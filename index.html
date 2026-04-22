@@ -10,12 +10,12 @@
     <div class="container">
         <header>
             <h1>TaskMaster</h1>
-            <button id="theme-toggle">🌙</button>
+            <button id="theme-toggle">Sötét mód</button>
         </header>
 
         <form id="task-form">
-            <input type="text" id="task-title" placeholder="Feladat címe" required>
-            <input type="date" id="task-deadline">
+            <input type="text" id="task-title" placeholder="Feladat címe" maxlength="100" required>
+            <input type="date" id="task-deadline" max="9999-12-31">
             
             <select id="task-priority">
                 <option value="low" selected>Alacsony</option>
@@ -38,13 +38,57 @@
         <ul id="task-list"></ul>
 
         <div class="actions">
-            <button id="show-stats">📊 Statisztika</button>
-            <button id="show-history">📜 Előzmények</button>
-            <button id="random-tip">💡 Random tipp</button>
+            <button id="show-stats">Statisztika</button>
+            <button id="show-history">Előzmények</button>
+            <button id="random-tip">Random tipp</button>
         </div>
     </div>
 
-    <!-- Statisztika modal -->
+    <!-- Új kategória popup -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <h2>Új kategória hozzáadása</h2>
+            <input type="text" id="new-category-name" placeholder="Kategória neve" maxlength="100">
+            <div style="margin-top: 20px;">
+                <button id="save-category">Mentés</button>
+                <button id="cancel-category">Mégse</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Szerkesztő popup -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h2>Feladat szerkesztése</h2>
+            <input type="text" id="edit-title" placeholder="Feladat címe" maxlength="100">
+            <textarea id="edit-note" placeholder="Megjegyzés..." maxlength="300"></textarea>
+            <input type="date" id="edit-deadline" max="9999-12-31">
+            
+            <select id="edit-priority">
+                <option value="low">Alacsony</option>
+                <option value="medium">Közepes</option>
+                <option value="high">Magas</option>
+            </select>
+
+            <select id="edit-category"></select>
+
+            <div style="margin-top: 20px;">
+                <button id="save-edit">Mentés</button>
+                <button id="cancel-edit">Mégse</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Random tipp popup -->
+    <div id="tip-modal" class="modal">
+        <div class="modal-content">
+            <h2>Random tipp</h2>
+            <p id="tip-text"></p>
+            <button id="close-tip">Bezárás</button>
+        </div>
+    </div>
+
+    <!-- Statisztika popup -->
     <div id="stats-modal" class="modal">
         <div class="modal-content">
             <h2>Statisztika</h2>
@@ -53,7 +97,7 @@
         </div>
     </div>
 
-    <!-- Előzmények modal -->
+    <!-- Előzmények popup -->
     <div id="history-modal" class="modal">
         <div class="modal-content">
             <h2>Előzmények</h2>
