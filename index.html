@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster - Feladatkezelő</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TaskMaster</h1>
+
+        <form id="task-form">
+            <input type="text" id="task-title" placeholder="Feladat címe" required>
+            
+            <!-- Új dátum mező: type="text" + placeholder útmutatóval -->
+            <input type="text" id="task-deadline" 
+                   placeholder="ÉÉÉÉ-HH-NN (pl. 2026-04-30)" 
+                   maxlength="10">
+            
+            <select id="task-priority">
+                <option value="low">Alacsony prioritás</option>
+                <option value="medium" selected>Közepes prioritás</option>
+                <option value="high">Magas prioritás</option>
+            </select>
+            
+            <button type="submit">Hozzáadás</button>
+        </form>
+
+        <ul id="task-list"></ul>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

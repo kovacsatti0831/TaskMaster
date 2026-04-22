@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.container {
+    max-width: 820px;
+    margin: 0 auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #2c3e50;
+}
+
+/* Űrlap */
+#task-form input[type="text"],
+#task-form input[type="date"],
+#task-form select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+#task-form button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#task-form button:hover {
+    background-color: #219a52;
+}
+
+/* Feladatok listája */
+#task-list {
+    list-style: none;
+    padding: 0;
+}
+
+#task-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8f9fa;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    min-height: 60px;
+    flex-wrap: wrap;
+}
+
+/* Színkódolás */
+.task-item.gray      { border-left: 6px solid #95a5a6; }
+.task-item.yellow    { border-left: 6px solid #f1c40f; }
+.task-item.red       { border-left: 7px solid #e74c3c; background-color: #fdf2f2; }
+.task-item.red-high  { border-left: 8px solid #c0392b; background-color: #ffebee; }
+
+.complete-checkbox {
+    width: 22px;
+    height: 22px;
+    accent-color: #27ae60;
+    cursor: pointer;
+}
+
+.task-title {
+    flex: 1;
+    font-size: 17px;
+    word-break: break-word;
+}
+
+.task-title.completed {
+    text-decoration: line-through;
+    color: #7f8c8d;
+}
+
+.deadline {
+    font-size: 14.5px;
+    color: #7f8c8d;
+    margin-left: auto;
+    white-space: nowrap;
+    padding-left: 10px;
+}
+
+.deadline.overdue {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Reszponzív */
+@media (max-width: 650px) {
+    #task-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .deadline, .delete-btn {
+        margin-left: 0;
+    }
+}
