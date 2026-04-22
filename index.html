@@ -29,9 +29,17 @@
             <button type="submit">Hozzáadás</button>
         </form>
 
-        <div class="filters">
+        <div class="controls">
             <select id="category-filter">
                 <option value="all">Összes kategória</option>
+            </select>
+
+            <select id="sort-option">
+                <option value="created-desc" selected>Hozzáadás szerint (legújabb felül)</option>
+                <option value="deadline-asc">Lejárat szerint (legkorábbi)</option>
+                <option value="deadline-desc">Lejárat szerint (legkésőbbi)</option>
+                <option value="priority">Prioritás szerint</option>
+                <option value="category">Kategória szerint</option>
             </select>
         </div>
 
@@ -49,7 +57,7 @@
         <div class="modal-content">
             <h2>Új kategória hozzáadása</h2>
             <input type="text" id="new-category-name" placeholder="Kategória neve" maxlength="100">
-            <div style="margin-top: 20px;">
+            <div class="modal-buttons">
                 <button id="save-category">Mentés</button>
                 <button id="cancel-category">Mégse</button>
             </div>
@@ -72,7 +80,7 @@
 
             <select id="edit-category"></select>
 
-            <div style="margin-top: 20px;">
+            <div class="modal-buttons">
                 <button id="save-edit">Mentés</button>
                 <button id="cancel-edit">Mégse</button>
             </div>

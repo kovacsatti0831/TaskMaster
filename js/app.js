@@ -1,6 +1,7 @@
 let tasks = [];
 let history = [];
 let categories = ["Munka", "Tanulás", "Háztartás", "Egyéb"];
+
 const STORAGE_KEY = 'tasks';
 const HISTORY_KEY = 'history';
 const CAT_KEY = 'categories';
@@ -43,12 +44,31 @@ function getTaskColor(task) {
     return 'gray';
 }
 
-function renderTasks(filter = 'all') {
+function sortTasks(tasksToSort, sortBy) {
+    let sorted = [...tasksToSort];
+    if (sortBy === "created-desc") {
+        sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortBy === "deadline-asc") {
+        sorted.sort((a, b) => (a.deadline || "9999-12-31").localeCompare(b.deadline || "9999-12-31"));
+    } else if (sortBy === "deadline-desc") {
+        sorted.sort((a, b) => (b.deadline || "0000-00-00").localeCompare(a.deadline || "0000-00-00"));
+    } else if (sortBy === "priority") {
+        const order = { high: 1, medium: 2, low: 3 };
+        sorted.sort((a, b) => order[a.priority] - order[b.priority]);
+    } else if (sortBy === "category") {
+        sorted.sort((a, b) => (a.category || "").localeCompare(b.category || ""));
+    }
+    return sorted;
+}
+
+function renderTasks(filter = 'all', sortBy = 'created-desc') {
     const list = document.getElementById('task-list');
     list.innerHTML = '';
 
     let filtered = tasks;
     if (filter !== 'all') filtered = tasks.filter(t => t.category === filter);
+
+    filtered = sortTasks(filtered, sortBy);
 
     filtered.forEach((task) => {
         const realIndex = tasks.findIndex(t => t.id === task.id);
@@ -92,7 +112,7 @@ function addEventListeners() {
             const index = parseInt(this.dataset.index);
             tasks[index].completed = this.checked;
             saveData();
-            renderTasks(document.getElementById('category-filter').value);
+            renderTasks(document.getElementById('category-filter').value, document.getElementById('sort-option').value);
         });
     });
 
@@ -104,7 +124,7 @@ function addEventListeners() {
             history.unshift(completedTask);
             tasks.splice(index, 1);
             saveData();
-            renderTasks(document.getElementById('category-filter').value);
+            renderTasks(document.getElementById('category-filter').value, document.getElementById('sort-option').value);
         });
     });
 
@@ -148,13 +168,13 @@ function addEventListeners() {
                 history.unshift(deleted);
                 tasks.splice(index, 1);
                 saveData();
-                renderTasks(document.getElementById('category-filter').value);
+                renderTasks(document.getElementById('category-filter').value, document.getElementById('sort-option').value);
             }
         });
     });
 }
 
-// Új kategória troll védelemmel + 100 karakter limit
+// Új kategória
 document.getElementById('add-category-btn').addEventListener('click', () => {
     document.getElementById('new-category-name').value = '';
     document.getElementById('category-modal').style.display = 'block';
@@ -162,23 +182,10 @@ document.getElementById('add-category-btn').addEventListener('click', () => {
 
 document.getElementById('save-category').addEventListener('click', () => {
     let newName = document.getElementById('new-category-name').value.trim();
-
-    if (!newName) {
-        alert("A kategória neve nem lehet üres!");
-        return;
-    }
-    if (newName.length > 100) {
-        alert("A kategória neve maximum 100 karakter lehet!");
-        return;
-    }
-    if (categories.includes(newName)) {
-        alert("Ez a kategória már létezik!");
-        return;
-    }
-    if (categories.length >= 20) {
-        alert("Maximum 20 kategóriát hozhatsz létre.");
-        return;
-    }
+    if (!newName) return alert("A kategória neve nem lehet üres!");
+    if (newName.length > 100) return alert("Maximum 100 karakter!");
+    if (categories.includes(newName)) return alert("Már létezik!");
+    if (categories.length >= 20) return alert("Maximum 20 kategória!");
 
     categories.push(newName);
     saveData();
@@ -190,18 +197,31 @@ document.getElementById('cancel-category').addEventListener('click', () => {
     document.getElementById('category-modal').style.display = 'none';
 });
 
-// Szűrés
-document.getElementById('category-filter').addEventListener('change', (e) => {
-    renderTasks(e.target.value);
+// Szűrés és rendezés
+document.getElementById('category-filter').addEventListener('change', () => {
+    renderTasks(document.getElementById('category-filter').value, document.getElementById('sort-option').value);
+});
+
+document.getElementById('sort-option').addEventListener('change', () => {
+    renderTasks(document.getElementById('category-filter').value, document.getElementById('sort-option').value);
 });
 
 // Statisztika
 document.getElementById('show-stats').addEventListener('click', () => {
-    let kesz = tasks.filter(t => t.completed).length;
-    let ossz = tasks.length;
-    let szoveg = `<p>Összes feladat: <strong>${ossz}</strong></p>`;
-    szoveg += `<p>Teljesített: <strong>${kesz}</strong> (${ossz ? Math.round(kesz/ossz*100) : 0}%)</p>`;
-    document.getElementById('stats-content').innerHTML = szoveg;
+    const totalEver = tasks.length + history.filter(h => h.action === "Teljesítve").length;
+    const current = tasks.length;
+    const completed = history.filter(h => h.action === "Teljesítve").length;
+    const overdue = tasks.filter(t => !t.completed && t.deadline && new Date(t.deadline) < new Date()).length;
+    const completionRate = current + completed > 0 ? Math.round((completed / (current + completed)) * 100) : 0;
+
+    let html = `
+        <p><strong>Összes feladat valaha:</strong> ${totalEver}</p>
+        <p><strong>Jelenlegi feladatok:</strong> ${current}</p>
+        <p><strong>Teljesített feladatok:</strong> ${completed}</p>
+        <p><strong>Lejárt feladatok:</strong> ${overdue}</p>
+        <p><strong>Teljesítési arány:</strong> ${completionRate}%</p>
+    `;
+    document.getElementById('stats-content').innerHTML = html;
     document.getElementById('stats-modal').style.display = 'block';
 });
 
@@ -264,7 +284,7 @@ document.getElementById('show-history').addEventListener('click', () => {
 
             history.splice(histIndex, 1);
             saveData();
-            renderTasks();
+            renderTasks(document.getElementById('category-filter').value, document.getElementById('sort-option').value);
             document.getElementById('show-history').click();
         });
     });
@@ -281,7 +301,15 @@ document.getElementById('random-tip').addEventListener('click', () => {
         "Írd fel a 3 legfontosabb feladatot mára.",
         "Használj Pomodoro technikát: 25 perc munka, 5 perc szünet.",
         "Csináld meg először a legnehezebb feladatot.",
-        "Állíts be egy kis jutalmat magadnak a nap végén."
+        "Állíts be egy kis jutalmat magadnak a nap végén.",
+        "Igyál egy pohár vizet és állj fel 2 percre.",
+        "Nézd meg a naptáradat és tervezd meg a következő órát.",
+        "Törölj ki egy felesleges dolgot az asztalodról.",
+        "Írj egy rövid köszönő üzenetet valakinek.",
+        "Csinálj 10 mély lélegzetet, mielőtt folytatod a munkát.",
+        "Állíts be egy időzítőt 25 percre és dolgozz fókuszáltan.",
+        "Készíts egy gyors prioritási listát a mai napra.",
+        "Tedd el a telefonodat 30 percre."
     ];
     document.getElementById('tip-text').textContent = tips[Math.floor(Math.random() * tips.length)];
     document.getElementById('tip-modal').style.display = 'block';
@@ -313,7 +341,7 @@ document.getElementById('task-form').addEventListener('submit', function(e) {
     });
 
     saveData();
-    renderTasks(document.getElementById('category-filter').value);
+    renderTasks(document.getElementById('category-filter').value, document.getElementById('sort-option').value);
     this.reset();
 });
 
