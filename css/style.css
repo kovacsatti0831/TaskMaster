@@ -1,0 +1,570 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #1e2937;
+    line-height: 1.5;
+    transition: background-color 0.3s;
+}
+body.dark {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+h1, h2, .panel-title {
+    font-family: 'Press Start 2P', sans-serif;
+}
+
+header {
+    background: #1e2937;
+    color: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+header h1 {
+    font-size: 28px;
+    letter-spacing: 2px;
+}
+
+.icon-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: 0.2s;
+    color: white;
+}
+.icon-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 25px;
+}
+
+.new-task-panel, .tasks-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+body.dark .new-task-panel,
+body.dark .tasks-section {
+    background: #1e2937;
+}
+.panel-title {
+    font-size: 18px;
+    margin-bottom: 22px;
+    text-align: center;
+    color: #1e40af;
+}
+body.dark .panel-title {
+    color: #67e8f9;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.controls select {
+    padding: 10px 14px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+}
+body.dark .controls select {
+    background: #334155;
+    border-color: #475569;
+    color: #e2e8f0;
+}
+
+#task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+#task-form input, #task-form select, #task-form textarea {
+    padding: 14px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+body.dark #task-form input, body.dark #task-form select, body.dark #task-form textarea {
+    background: #334155;
+    border-color: #475569;
+    color: #e2e8f0;
+}
+
+button {
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 14px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.add-btn {
+    background: #22c55e;
+    color: white;
+    padding: 16px;
+    font-weight: bold;
+}
+#add-category-btn {
+    background: #64748b;
+    color: white;
+    padding: 12px;
+}
+#add-category-btn:hover { background: #475569; }
+
+.task-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+.edit-btn, .delete-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 6px;
+}
+.edit-btn { background: #3b82f6; color: white; }
+.delete-btn { background: #ef4444; color: white; }
+.edit-btn:hover { background: #2563eb; }
+.delete-btn:hover { background: #dc2626; }
+
+
+#task-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.task-item {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 8px solid #64748b;
+    transition: all 0.2s;
+}
+body.dark .task-item {
+    background: #334155;
+}
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.task-item.low { border-left-color: #64748b; }
+.task-item.medium { border-left-color: #eab308; }
+.task-item.high { border-left-color: #ef4444; }
+.task-title {
+    flex: 1;
+    font-size: 17px;
+    font-weight: 500;
+}
+.task-title.completed {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+.note {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    margin-top: 4px;
+}
+body.dark .note {
+    color: #bbbbbb;
+}
+
+.actions {
+    margin-top: 35px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.actions button {
+    padding: 14px 24px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', sans-serif;
+    transition: all 0.2s;
+    min-width: 140px;
+}
+.actions button {
+    background: #64748b;
+    color: white;
+}
+.actions button:hover {
+    background: #475569;
+}
+#reset-data {
+    background: #ef4444;
+    color: white;
+}
+#reset-data:hover {
+    background: #dc2626;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.75);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: white;
+    padding: 35px 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    text-align: center;
+}
+body.dark .modal-content {
+    background: #1e2937;
+    color: #e2e8f0;
+}
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+.modal-content input, .modal-content select, .modal-content textarea {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 18px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+body.dark .modal-content input, body.dark .modal-content select, body.dark .modal-content textarea {
+    background: #334155;
+    border-color: #475569;
+    color: #e2e8f0;
+}
+.modal-buttons {
+    margin-top: 25px;
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+}
+.modal-buttons button {
+    padding: 14px 32px;
+    font-size: 15px;
+    border-radius: 8px;
+    min-width: 130px;
+}
+#save-edit, #save-category, #confirm-reset {
+    background: #22c55e;
+    color: white;
+}
+#cancel-edit, #cancel-category, #cancel-reset, #confirm-no {
+    background: #64748b;
+    color: white;
+}
+
+.history-item {
+    background: white;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 8px solid #64748b;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+body.dark .history-item {
+    background: #334155;
+}
+
+.history-item .task-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-item small {
+    color: #666;
+    margin-right: 12px;
+    white-space: nowrap;
+}
+
+body.dark .history-item small {
+    color: #94a3b8;
+}
+
+#history-content {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.history-item {
+    background: white;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 8px solid #64748b;
+    min-width: 0;
+}
+
+body.dark .history-item {
+    background: #334155;
+}
+
+.history-item .task-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;           
+}
+
+.history-item small {
+    color: #666;
+    margin-right: 12px;
+    white-space: nowrap;
+}
+
+body.dark .history-item small {
+    color: #94a3b8;
+}
+
+.history-item .note {
+    flex: 1 1 100%;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.dark .history-item .note {
+    color: #94a3b8;
+}
+
+.history-item .undo-btn {
+    margin-left: auto;
+    font-size: 12px;
+    padding: 6px 14px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+body.dark .history-item .undo-btn {
+    background: #60a5fa;
+}
+
+.history-item .undo-btn:hover {
+    background: #2563eb;
+}
+
+.history-item.completed {
+    border-left-color: #22c55e;
+}
+.history-item.deleted {
+    border-left-color: #ef4444;
+}
+
+.undo-btn {
+    font-size: 12px;
+    padding: 7px 14px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: normal;
+    margin-left: auto;
+}
+
+.undo-btn:hover {
+    background: #2563eb;
+}
+
+body.dark .undo-btn {
+    background: #60a5fa;
+}
+
+body.dark .undo-btn:hover {
+    background: #3b82f6;
+}
+
+/* ==================================================== MOBIL RESZPONZÍV DESIGN ==================================================== */
+
+/* ===================== BOTTOM NAVIGATION ===================== */
+
+.bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1e2937;
+    border-top: 4px solid #334155;
+    padding: 10px 0 8px;
+    z-index: 9999;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.4);
+}
+
+.bottom-nav .nav-item {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Press Start 2P', sans-serif;
+}
+
+.bottom-nav .nav-item span:first-child {
+    font-size: 28px;
+}
+
+.bottom-nav .nav-item.active {
+    color: #67e8f9;
+}
+
+
+/* ===================== MOBIL RESZPONZÍV - TELJES ===================== */
+@media (max-width: 768px) {
+
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding-bottom: 100px;
+    }
+
+    .app {
+        padding-bottom: 20px;
+    }
+
+    header {
+        padding: 15px 20px;
+        margin-bottom: 15px;
+    }
+
+    .new-task-panel, .tasks-section {
+        padding: 18px;
+    }
+
+    .panel-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    /* Hosszú szövegek kezelése */
+    .task-item {
+        padding: 14px 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .task-info {
+        flex: 1;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .task-title {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.4;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+        margin-bottom: 5px;
+    }
+
+    .note {
+        font-size: 13.5px;
+        line-height: 1.35;
+        color: #666;
+        font-style: italic;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+    body.dark .note {
+        color: #bbbbbb;
+    }
+
+    .task-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+
+    /* History modal hosszú szöveg */
+    .history-item .task-title {
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+    /* Bottom nav megjelenítése */
+    .bottom-nav {
+        display: flex;
+    }
+
+    .actions {
+        display: none;
+    }
+}

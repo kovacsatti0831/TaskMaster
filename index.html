@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>TaskMaster</h1>
+            <div class="header-right">
+                <button id="random-tip-btn" class="icon-btn">💡</button>
+                <button id="theme-toggle" class="icon-btn">🌙</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="new-task-panel">
+                <h2 class="panel-title">NEW TASK</h2>
+                <form id="task-form">
+                    <input type="text" id="task-title" placeholder="Task title..." maxlength="100" required>
+                    <input type="date" id="task-deadline" max="9999-12-31">
+                    <select id="task-priority">
+                        <option value="low" selected>Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <select id="task-category"></select>
+                    <textarea id="task-note" placeholder="Note (optional)..." maxlength="120"></textarea>
+                    <button type="button" id="add-category-btn">+ New Category</button>
+                    <button type="submit" class="add-btn">ADD TASK</button>
+                </form>
+            </aside>
+
+            <section class="tasks-section">
+                <h2 class="panel-title">TASKS</h2>
+                <div class="controls">
+                    <select id="category-filter">
+                        <option value="all">All Categories</option>
+                    </select>
+                    <select id="sort-option">
+                        <option value="created-desc" selected>Newest first</option>
+                        <option value="deadline-asc">Deadline (soonest)</option>
+                        <option value="deadline-desc">Deadline (latest)</option>
+                        <option value="priority">Priority</option>
+                    </select>
+                </div>
+                <ul id="task-list"></ul>
+            </section>
+        </div>
+
+        <div class="actions">
+            <button id="show-stats">Statistics</button>
+            <button id="show-history">History</button>
+            <button id="reset-data">Reset All Data</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Task</h2>
+            <input type="text" id="edit-title" placeholder="Task title..." maxlength="100">
+            <textarea id="edit-note" placeholder="Note..." maxlength="120"></textarea>
+            <input type="date" id="edit-deadline" max="9999-12-31">
+            <select id="edit-priority">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            <select id="edit-category"></select>
+            <div class="modal-buttons">
+                <button id="save-edit">Save</button>
+                <button id="cancel-edit">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <h2>New Category</h2>
+            <input type="text" id="new-category-name" placeholder="Category name" maxlength="20">
+            <div class="modal-buttons">
+                <button id="save-category">Save</button>
+                <button id="cancel-category">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reset-modal" class="modal">
+        <div class="modal-content">
+            <h2>Reset All Data</h2>
+            <p style="margin: 20px 0;">Are you sure you want to reset all data?</p>
+            <div class="modal-buttons">
+                <button id="confirm-reset" style="background:#ef4444;color:white;">Yes, Reset</button>
+                <button id="cancel-reset">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-action-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="confirm-title">Confirm Action</h2>
+            <p id="confirm-message"></p>
+            <div class="modal-buttons">
+                <button id="confirm-yes" style="background:#ef4444;color:white;">Yes</button>
+                <button id="confirm-no">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <h2>History</h2>
+            <div id="history-content"></div>
+            <button id="close-history">Close</button>
+        </div>
+    </div>
+
+    <div id="tip-modal" class="modal">
+        <div class="modal-content">
+            <h2>Random Tip</h2>
+            <p id="tip-text" style="font-size: 16px; margin: 20px 0; min-height: 80px;"></p>
+            <div class="modal-buttons">
+                <button id="new-tip-btn">New Tip</button>
+                <button id="close-tip">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal">
+        <div class="modal-content">
+            <h2>Statistics</h2>
+            <div id="stats-content" style="text-align: left; font-size: 15px; line-height: 1.8; padding: 10px 0;"></div>
+            <div class="modal-buttons">
+                <button id="close-stats">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="message-title">Message</h2>
+            <p id="message-text" style="margin: 20px 0; font-size: 16px;"></p>
+            <div class="modal-buttons">
+                <button id="close-message">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- BOTTOM NAVIGATION gombok -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="nav-history">
+            <span>📜</span>
+            <span>History</span>
+        </button>
+        <button class="nav-item" id="nav-stats">
+            <span>📊</span>
+            <span>Stats</span>
+        </button>
+        <button class="nav-item" id="nav-reset">
+            <span>♻️</span>
+            <span>Reset</span>
+        </button>
+    </nav>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
